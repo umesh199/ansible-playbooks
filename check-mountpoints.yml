@@ -1,0 +1,31 @@
+---
+- name: Check Mount Point Existence
+  hosts: your_hosts
+  gather_facts: false
+
+  vars:
+    mount_points:
+      - /mount/point1
+      - /mount/point2
+      - /mount/point3
+
+  tasks:
+    - name: Check if mount points exist
+      stat:
+        path: "{{ item }}"
+      loop: "{{ mount_points }}"
+      register: mount_point_stat
+
+    - name: Print result for each mount point
+      debug:
+        msg: >
+          "Mount point {{ item.item }} exists."
+        loop: "{{ mount_point_stat.results }}"
+        when: item.stat.exists
+
+    - name: Print result for each mount point
+      debug:
+        msg: >
+          "Mount point {{ item.item }} does not exist."
+        loop: "{{ mount_point_stat.results }}"
+        when: not item.stat.exists
